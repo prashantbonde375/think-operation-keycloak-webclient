@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      default-filters:
+        - TokenRelay
+      routes:
+        # Route to your MVC UI service
+        - id: ui
+          uri: http://localhost:8081
+          predicates:
+            - Path=/ui/**
+
+      # Optional: enable detailed logging for debugging routes
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9090/realms/myrealm
+          jwk-set-uri: http://localhost:9090/realms/myrealm/protocol/openid-connect/certs
+
