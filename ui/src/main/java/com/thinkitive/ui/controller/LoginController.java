@@ -1,25 +1,33 @@
 package com.thinkitive.ui.controller;
 
+import java.util.Map;
+
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class LoginController {
 
-    // @GetMapping("/")
-    // public String home(@AuthenticationPrincipal OidcUser user, Model model) {
-    //     model.addAttribute("name", user != null ? user.getFullName() : "Guest");
-    //     return "home"; // create home.html if needed
-    // }
-
-    @GetMapping("/login")
-    public String login() {
-        return "redirect:/oauth2/authorization/keycloak";
+    @GetMapping("/profile")
+    public String profile(Model model, OAuth2AuthenticationToken authentication) {
+        Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
+        model.addAttribute("user", attributes);
+        return "profile";
     }
 
-    @GetMapping("/register")
-    public String register() {
-        // Redirect to Keycloak registration page directly
-        return "redirect:http://localhost:8080/realms/<your-realm-name>/protocol/openid-connect/registrations";
+    @GetMapping("/")
+    public String home() {
+        return "home";
+    }
+
+    @GetMapping("/token")
+    @ResponseBody
+    public String token(OAuth2AuthenticationToken authentication) {
+        var principal = authentication.getPrincipal();
+        var token = principal.getAttribute("access_token");
+        return "Access Token: " + token;
     }
 }

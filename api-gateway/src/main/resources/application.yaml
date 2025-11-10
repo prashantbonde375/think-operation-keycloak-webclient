@@ -7,14 +7,13 @@ spring:
 
   cloud:
     gateway:
-      default-filters:
-        - TokenRelay
       routes:
-        # Route to your MVC UI service
         - id: ui
           uri: http://localhost:8081
           predicates:
-            - Path=/ui/**
+            - Path=/ui/**, /login/**, /oauth2/**, /logout/**, /error/**, /profile/**
+          filters:
+            - RewritePath=/ui/(?<segment>.*), /${segment}
 
       # Optional: enable detailed logging for debugging routes
       httpclient:
@@ -24,8 +23,19 @@ spring:
 
   security:
     oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:9090/realms/thinkitive
+        registration:
+          keycloak:
+            client-id: mvc-client
+            client-secret: 9Shpfqgwwmat5DsfKG40EBee8r0lxhis
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8081/login/oauth2/code/keycloak"
+            scope: openid, profile, email
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:9090/realms/myrealm
-          jwk-set-uri: http://localhost:9090/realms/myrealm/protocol/openid-connect/certs
+          issuer-uri: http://localhost:9090/realms/thinkitive
+          jwk-set-uri: http://localhost:9090/realms/thinkitive/protocol/openid-connect/certs
 
