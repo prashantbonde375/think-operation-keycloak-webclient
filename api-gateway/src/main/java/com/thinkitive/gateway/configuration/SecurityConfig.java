@@ -14,7 +14,7 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/ui/**").permitAll()   // allow MVC UI
+                        .pathMatchers("/**").permitAll()   // allow MVC UI
                         .pathMatchers("/actuator/**").permitAll()
                         .anyExchange().authenticated()          // secure all other routes
                 )

@@ -11,9 +11,25 @@ spring:
         - id: ui
           uri: http://localhost:8081
           predicates:
-            - Path=/ui/**, /login/**, /oauth2/**, /logout/**, /error/**, /profile/**
+            - Path=/login/**, /oauth2/**, /logout/**, /error/**, /profile/**
+
+        - id: employee
+          uri: lb://EMPLOYEE
+          predicates:
+          - Path=/employee/**
+
+        - id: hr
+          uri: lb://HR
+          predicates:
+            - Path=/hr/**
+
+        - id: intern
+          uri: lb://INTERN
+          predicates:
+            - Path=/intern/**
+
           filters:
-            - RewritePath=/ui/(?<segment>.*), /${segment}
+            - RewritePath=/(?<segment>.*), /${segment}
 
       # Optional: enable detailed logging for debugging routes
       httpclient:
@@ -21,6 +37,9 @@ spring:
       httpserver:
         wiretap: true
 
+      discovery:
+        locator:
+          enabled: true
   security:
     oauth2:
       client:
@@ -32,7 +51,7 @@ spring:
             client-id: mvc-client
             client-secret: 9Shpfqgwwmat5DsfKG40EBee8r0lxhis
             authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:8081/login/oauth2/code/keycloak"
+            redirect-uri: http://localhost:8080/login/oauth2/code/keycloak
             scope: openid, profile, email
       resourceserver:
         jwt:
